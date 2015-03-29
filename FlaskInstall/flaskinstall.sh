@@ -3,7 +3,7 @@
 # FlaskInstall by Nick Tikhonov
 # installs Apache 2 with Flask on a fresh Ubuntu server
 
-echo "This script will install Apache 2 with Flask on a fresh Ubuntu server. Please type anything to being: "
+echo "This script will install Apache 2 with Flask on a fresh Ubuntu server. Please type anything to begin: "
 read continueinstallation
 
 # Start by installing Apache 
