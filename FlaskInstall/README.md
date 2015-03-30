@@ -1,5 +1,5 @@
 # FlaskInstall
-This script allows you to deploy Flask on a fresh Ubuntu 14.04 installation. Tested on DigitalOcean.
+Flask is a clean and simple web routing framework for Python and allows you to build web applications quickly (http://flask.pocoo.org/). This script allows you to deploy Flask on a fresh Ubuntu 14.04 installation. Tested - working with DigitalOcean.
 
 - Installs Apache2 with WSGI
 - Installs/configures Flask
