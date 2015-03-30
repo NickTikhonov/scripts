@@ -3,8 +3,35 @@
 # FlaskInstall by Nick Tikhonov
 # installs Apache 2 with Flask on a fresh Ubuntu server
 
-echo "This script will install Apache 2 with Flask on a fresh Ubuntu server. Please type anything to begin: "
+echo "------ FlaskInstall by Nick Tikhonov ------"
+echo "NOTE: Please make sure you are running this on Ubuntu 13+"
+echo "This script will install + configure:"
+echo " -- Apache 2"
+echo " -- Apache WSGI"
+echo " -- MySQL (will configure app database)"
+echo " -- Flask (will configure WSGI and create template project w. database access)"
+echo "Please type anything to begin installation!"
 read continueinstallation
+
+echo "------------------------"
+echo "Please enter a MySQL root password (this will be printed at the end):"
+read mysql_password
+
+echo "------------------------"
+echo "Application Name (e.g. 'FlaskApp' or 'WebsiteApp' or 'HelloWorldApp'): "
+read appname
+
+echo "------------------------"
+echo "Domain name or server IP address (e.g. mywebsite.net): "
+read hostaddress
+
+echo "------------------------"
+echo "Admin email address (e.g. admin@mywebsite.net): "
+read adminemail
+
+echo "------------------------"
+echo "Please enter a secret key (a long & secure string of characters): "
+read secretkey
 
 # Start by installing Apache 
 sudo apt-get update
@@ -14,9 +41,6 @@ sudo apt-get install libmysqlclient-dev
 sudo a2enmod wsgi 
 
 # Install MySQL Server
-echo "------------------------"
-echo "Please enter a MySQL root password (this will be printed at the end):"
-read mysql_password
 
 echo "mysql-server-5.5 mysql-server/root_password password $mysql_password" | debconf-set-selections
 echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_password" | debconf-set-selections
@@ -24,10 +48,6 @@ sudo apt-get -y install mysql-server
 
 # Create the template flask app
 cd /var/www 
-
-echo "------------------------"
-echo "Application Name (e.g. 'FlaskApp' or 'WebsiteApp'): "
-read appname
 
 #make MySQL DB for the app
 mysql -u root -p$mysql_password -e "create database $appname"
@@ -54,7 +74,9 @@ mysql.init_app(app)
 def query(sql_string):
 	cursor = mysql.connect().cursor()
 	cursor.execute(sql_string)
-	return cursor.fetchall()
+	results = cursor.fetchall()
+	cursor.close()
+	return results
 
 @app.route("/")
 def hello():
@@ -67,14 +89,6 @@ EOF
 sudo apt-get install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
-
-echo "------------------------"
-echo "Domain name or server IP address: "
-read hostaddress
-
-echo "------------------------"
-echo "Admin email address: "
-read adminemail
 
 cat <<EOF > /etc/apache2/sites-available/$appname.conf
 <VirtualHost *:80>
@@ -97,10 +111,6 @@ cat <<EOF > /etc/apache2/sites-available/$appname.conf
 EOF
 
 sudo a2ensite $appname
-
-echo "------------------------"
-echo "Please enter a secret key (punch the keyboard a few times): "
-read secretkey
 
 cat <<EOF > /var/www/$appname/$appname.wsgi
 #!/usr/bin/python
