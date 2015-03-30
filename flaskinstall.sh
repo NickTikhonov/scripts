@@ -16,8 +16,8 @@ sudo a2enmod wsgi
 echo "Please enter a MySQL root password (this will be printed at the end):"
 read mysql_password
 
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_password" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_password" | debconf-set-selections
+sudo debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password password $mysql_password'
+sudo debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password_again password $mysql_password'
 sudo apt-get -y install mysql-server
 
 # Create the template flask app
