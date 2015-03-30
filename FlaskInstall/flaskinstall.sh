@@ -27,6 +27,9 @@ cd /var/www
 echo "Application Name (e.g. 'FlaskApp' or 'WebsiteApp'): "
 read appname
 
+#make MySQL DB for the app
+mysql -u root -p$mysql_password -e "create database $appname"
+
 sudo mkdir $appname
 cd $appname
 sudo mkdir $appname 
@@ -37,11 +40,10 @@ cat <<EOF > __init__.py
 from flask import Flask
 from flaskext.mysql import MySQL
  
-mysql = MySQL()
 app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '$mysql_password'
-app.config['MYSQL_DATABASE_DB'] = 'SET_THIS'
+app.config['MYSQL_DATABASE_DB'] = '$appname'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
