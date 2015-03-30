@@ -14,6 +14,7 @@ sudo apt-get install libmysqlclient-dev
 sudo a2enmod wsgi 
 
 # Install MySQL Server
+echo "------------------------"
 echo "Please enter a MySQL root password (this will be printed at the end):"
 read mysql_password
 
@@ -24,6 +25,7 @@ sudo apt-get -y install mysql-server
 # Create the template flask app
 cd /var/www 
 
+echo "------------------------"
 echo "Application Name (e.g. 'FlaskApp' or 'WebsiteApp'): "
 read appname
 
@@ -66,9 +68,11 @@ sudo apt-get install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
 
+echo "------------------------"
 echo "Domain name or server IP address: "
 read hostaddress
 
+echo "------------------------"
 echo "Admin email address: "
 read adminemail
 
@@ -94,6 +98,7 @@ EOF
 
 sudo a2ensite $appname
 
+echo "------------------------"
 echo "Please enter a secret key (punch the keyboard a few times): "
 read secretkey
 
