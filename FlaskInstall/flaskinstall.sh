@@ -12,6 +12,14 @@ sudo apt-get install apache2
 sudo apt-get install libapache2-mod-wsgi python-dev
 sudo a2enmod wsgi 
 
+# Install MySQL Server
+echo "Please enter a MySQL root password (this will be printed at the end):"
+read mysql_password
+
+sudo debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password password $mysql_password'
+sudo debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password_again password $mysql_password'
+sudo apt-get -y install mysql-server
+
 # Create the template flask app
 cd /var/www 
 
@@ -26,7 +34,21 @@ sudo mkdir static templates
 
 cat <<EOF > __init__.py
 from flask import Flask
+from flaskext.mysql import MySQL
+ 
+mysql = MySQL()
 app = Flask(__name__)
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = '$mysql_password'
+app.config['MYSQL_DATABASE_DB'] = 'SET_THIS'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
+
+def query(sql_string):
+	cursor = mysql.connect().cursor()
+	cursor.execute(sql_string)
+	return cursor.fetchall()
+
 @app.route("/")
 def hello():
 	return "Hello World! FlaskInstall ran correctly!"
@@ -34,9 +56,10 @@ if __name__ == "__main__":
 	app.run()
 EOF
 
-# Install Flask
+# Install Flask, Flask-MySQL
 sudo apt-get install python-pip
 sudo pip install Flask
+sudo pip install flask-mysql
 
 echo "Domain name or server IP address: "
 read hostaddress
@@ -83,5 +106,9 @@ EOF
 sudo service apache2 restart
 
 echo "Done! Please visit $hostaddress to check that everything works"
-echo "App name : $appname"
-echo "Address  : $hostaddress"
+echo "|---------------------------------"
+echo "| App name       : $appname       "
+echo "| Address        : $hostaddress   "
+echo "| Secret Key     : $secretkey     "
+echo "| MySQL password : $mysql_password"
+echo "|---------------------------------"
