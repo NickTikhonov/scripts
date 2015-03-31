@@ -10,6 +10,12 @@ echo " -- Apache 2"
 echo " -- Apache WSGI"
 echo " -- MySQL (will configure app database)"
 echo " -- Flask (will configure WSGI and create template project w. database access)"
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root!" 1>&2
+   exit 1
+fi
+
 echo "Please type anything to begin installation!"
 read continueinstallation
 
