@@ -10,6 +10,8 @@ Flask is a clean and simple web routing framework for Python and allows you to b
 ```
 $ # Downloads flaskinstall.sh
 $ wget https://raw.githubusercontent.com/NickTikhonov/scripts/master/FlaskInstall/flaskinstall.sh
-$ # Runs flaskinstall
-$ ./flaskinstall.sh
+$ # Makes the script executable
+$ chmod +x flaskinstall.sh
+$ # Runs flaskinstall as root
+$ sudo ./flaskinstall.sh
 ```

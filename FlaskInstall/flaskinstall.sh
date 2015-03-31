@@ -10,6 +10,12 @@ echo " -- Apache 2"
 echo " -- Apache WSGI"
 echo " -- MySQL (will configure app database)"
 echo " -- Flask (will configure WSGI and create template project w. database access)"
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root!" 1>&2
+   exit 1
+fi
+
 echo "Please type anything to begin installation!"
 read continueinstallation
 
@@ -34,16 +40,16 @@ echo "Please enter a secret key (a long & secure string of characters): "
 read secretkey
 
 # Start by installing Apache 
-sudo apt-get update
-sudo apt-get install apache2
-sudo apt-get install libapache2-mod-wsgi python-dev
-sudo apt-get install libmysqlclient-dev
+sudo apt-get -y update
+sudo apt-get -y install apache2
+sudo apt-get -y install libapache2-mod-wsgi python-dev
+sudo apt-get -y install libmysqlclient-dev
 sudo a2enmod wsgi 
 
 # Install MySQL Server
 
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_password" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_password" | debconf-set-selections
+echo "mysql-server mysql-server/root_password password $mysql_password" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_password" | debconf-set-selections
 sudo apt-get -y install mysql-server
 
 # Create the template flask app
@@ -86,7 +92,7 @@ if __name__ == "__main__":
 EOF
 
 # Install Flask, Flask-MySQL
-sudo apt-get install python-pip
+sudo apt-get -y install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
 
@@ -110,6 +116,7 @@ cat <<EOF > /etc/apache2/sites-available/$appname.conf
 </VirtualHost>
 EOF
 
+sudo a2dissite 000-default
 sudo a2ensite $appname
 
 cat <<EOF > /var/www/$appname/$appname.wsgi
