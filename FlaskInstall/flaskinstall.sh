@@ -42,8 +42,8 @@ sudo a2enmod wsgi
 
 # Install MySQL Server
 
-echo "mysql-server-5.5 mysql-server/root_password password $mysql_password" | debconf-set-selections
-echo "mysql-server-5.5 mysql-server/root_password_again password $mysql_password" | debconf-set-selections
+echo "mysql-server mysql-server/root_password password $mysql_password" | debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $mysql_password" | debconf-set-selections
 sudo apt-get -y install mysql-server
 
 # Create the template flask app
@@ -110,6 +110,7 @@ cat <<EOF > /etc/apache2/sites-available/$appname.conf
 </VirtualHost>
 EOF
 
+sudo a2dissite 000-default
 sudo a2ensite $appname
 
 cat <<EOF > /var/www/$appname/$appname.wsgi
