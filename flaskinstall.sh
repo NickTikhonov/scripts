@@ -52,8 +52,10 @@ def query(sql_string):
 @app.route("/")
 def hello():
 	return "Hello World! FlaskInstall ran correctly!"
+
 if __name__ == "__main__":
-	app.run()
+  app.debug = True
+  app.run()
 EOF
 
 # Install Flask, Flask-MySQL
