@@ -64,8 +64,20 @@ sudo mkdir $appname
 cd $appname
 sudo mkdir static templates
 
+cat <<EOF > templates/index.html
+<html>
+<head>
+	<title>$appname</title>
+</head>
+<body>
+	<h1>Hello World!</h1></br>
+	<p>FlaskInstall completed correctly!</p>
+</body>
+</html>
+EOF
+
 cat <<EOF > __init__.py
-from flask import Flask
+from flask import Flask, render_template
 from flaskext.mysql import MySQL
 
 mysql = MySQL()
@@ -85,8 +97,13 @@ def query(sql_string):
 	return results
 
 @app.route("/")
-def hello():
-	return "Hello World! FlaskInstall ran correctly!"
+def index():
+	try:
+		# Index logic goes here 
+		return render_template("index.html")
+	except Exception, e:
+		return str(e)
+
 if __name__ == "__main__":
 	app.run()
 EOF
