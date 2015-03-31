@@ -34,10 +34,10 @@ echo "Please enter a secret key (a long & secure string of characters): "
 read secretkey
 
 # Start by installing Apache 
-sudo apt-get update
-sudo apt-get install apache2
-sudo apt-get install libapache2-mod-wsgi python-dev
-sudo apt-get install libmysqlclient-dev
+sudo apt-get -y update
+sudo apt-get -y install apache2
+sudo apt-get -y install libapache2-mod-wsgi python-dev
+sudo apt-get -y install libmysqlclient-dev
 sudo a2enmod wsgi 
 
 # Install MySQL Server
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 EOF
 
 # Install Flask, Flask-MySQL
-sudo apt-get install python-pip
+sudo apt-get -y install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
 
