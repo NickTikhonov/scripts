@@ -9,7 +9,7 @@ echo "This script will install + configure:"
 echo " -- Apache 2"
 echo " -- Apache WSGI"
 echo " -- MySQL (will configure app database)"
-echo " -- Flask (will configure WSGI and create template project w. database access)"
+echo " -- Flask (will configure WSGI and create template project w. database ORM access)"
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root!" 1>&2
@@ -79,11 +79,16 @@ EOF
 cat <<EOF > __init__.py
 from flask import Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
+import flask.ext.restless
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:$mysql_password@localhost/$appname'
 db = SQLAlchemy(app)
+
+# ------------------------------------------
+# Database ORM Section - with Flask SQLAlchemy
+# ------------------------------------------
 
 # Example ORM model - please modify to your requirements
 # SQL Alchemy quick reference: pythonhosted.org/Flask-SQLAlchemy/quickstart.html
@@ -98,6 +103,18 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+# ------------------------------------------
+# Database API Section - with Flask Restless
+# ------------------------------------------
+
+manager = flask.ext.restless.APIManager(app, flask_sqlalchemy_db=db)
+manager.create_api(User, methods=['GET', 'POST', 'DELETE'])
+
+
+# ------------------------------------------
+# Routing Section
+# ------------------------------------------
 
 # Sets up the database - visit this page after configuring 
 # SQLAlchemy models above 
@@ -128,6 +145,7 @@ sudo apt-get -y install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
 sudo pip install Flask-SQLAlchemy
+sudo pip install Flask-Restless
 
 cat <<EOF > /etc/apache2/sites-available/$appname.conf
 <VirtualHost *:80>
