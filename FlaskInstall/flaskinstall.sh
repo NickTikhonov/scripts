@@ -78,24 +78,39 @@ EOF
 
 cat <<EOF > __init__.py
 from flask import Flask, render_template
-from flaskext.mysql import MySQL
+from flask.ext.sqlalchemy import SQLAlchemy
 
-mysql = MySQL()
 app = Flask(__name__)
 
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '$mysql_password'
-app.config['MYSQL_DATABASE_DB'] = '$appname'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:$mysql_password@localhost/$appname'
+db = SQLAlchemy(app)
 
-def query(sql_string):
-	cursor = mysql.connect().cursor()
-	cursor.execute(sql_string)
-	results = cursor.fetchall()
-	cursor.close()
-	return results
+# Example ORM model - please modify to your requirements
+# SQL Alchemy quick reference: pythonhosted.org/Flask-SQLAlchemy/quickstart.html
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True)
+    email = db.Column(db.String(120), unique=True)
 
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+# Sets up the database - visit this page after configuring 
+# SQLAlchemy models above 
+@app.route("/mysql_db_setup')
+def db_setup():
+	try:
+		# Database setup logic
+		db.create_all()
+		return "Database setup was successfull, please disable db_setup() in your application"
+	except Exception, e:
+		return str(e)
+
+# Root page - please change as required
 @app.route("/")
 def index():
 	try:
@@ -112,6 +127,7 @@ EOF
 sudo apt-get -y install python-pip
 sudo pip install Flask
 sudo pip install flask-mysql
+sudo pip install Flask-SQLAlchemy
 
 cat <<EOF > /etc/apache2/sites-available/$appname.conf
 <VirtualHost *:80>
