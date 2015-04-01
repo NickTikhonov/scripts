@@ -4,7 +4,7 @@ Flask is a clean and simple web routing framework for Python and allows you to b
 - Installs Apache2 with WSGI
 - Installs/configures Flask
 - Installs/configures MySQL server w. database
-- Creates a template Flask application with database access
+- Creates a template Flask application with SQLAlchemy access (ORM)
 
 # Download:
 ```
