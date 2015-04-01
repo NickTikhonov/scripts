@@ -101,7 +101,7 @@ class User(db.Model):
 
 # Sets up the database - visit this page after configuring 
 # SQLAlchemy models above 
-@app.route("/mysql_db_setup')
+@app.route("/mysql_db_setup")
 def db_setup():
 	try:
 		# Database setup logic
