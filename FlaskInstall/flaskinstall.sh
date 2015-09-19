@@ -44,6 +44,7 @@ sudo apt-get -y update
 sudo apt-get -y install apache2
 sudo apt-get -y install libapache2-mod-wsgi python-dev
 sudo apt-get -y install libmysqlclient-dev
+sudo apt-get -y install git
 sudo a2enmod wsgi 
 
 # Install MySQL Server
@@ -146,6 +147,8 @@ sudo pip install Flask
 sudo pip install flask-mysql
 sudo pip install Flask-SQLAlchemy
 sudo pip install Flask-Restless
+sudo pip install braintree
+sudo pip install Flask-Cors
 
 cat <<EOF > /etc/apache2/sites-available/$appname.conf
 <VirtualHost *:80>
