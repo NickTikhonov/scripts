@@ -1,0 +1,6 @@
+TEX_FILE=$1
+
+pdflatex $TEX_FILE
+bibtex $TEX_FILE
+pdflatex $TEX_FILE
+pdflatex $TEX_FILE
