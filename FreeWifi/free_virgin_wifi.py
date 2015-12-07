@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from utils import random_mac, connect_hotspot
+from utils import random_mac, connect_hotspot, ignored
 import random
 import time
 import requests
@@ -22,8 +22,8 @@ def virgin_portal_login():
 
     driver.get(LOGIN_ENDPOINT)
 
-    logged_in = True
-    try:
+    logged_in = False
+    with ignored(Exception):
         email_field = driver.find_element_by_name("tb_email")
         if email_field:
             print "\t-> Entering random email.."
@@ -33,9 +33,7 @@ def virgin_portal_login():
         print "\t-> Selecting free 15min Wi-Fi option"
         free_wifi_button = driver.find_element_by_id("btn15Min")
         free_wifi_button.send_keys(Keys.RETURN)
-    except Exception:
-        logged_in = False
-        pass
+        logged_in = True
 
     driver.close()
     return logged_in
@@ -51,13 +49,10 @@ def free_wifi():
     connect_hotspot("VirginTrainsEC-WiFi")
 
     while True:
-        try:
+        with ignored(Exception):
             res = requests.request(method="GET", url=LOGIN_ENDPOINT)
             if res.status_code == 200:
                 break
-        except Exception:
-            print "No connection, waiting.."
-            time.sleep(1)
 
     print "Grabbing free 15 minutes.."
 
