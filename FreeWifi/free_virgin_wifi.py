@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from retrying import retry
 from utils import random_mac, connect_hotspot, ignored
 import random
 import time
@@ -8,7 +9,7 @@ import requests
 HEADLESS_LOGIN = False
 LOGIN_ENDPOINT = "http://virgintrainseastcost.on.icomera.com/"
 
-
+@retry
 def virgin_portal_login():
     '''
     Automates login-page navigation, enables free 15 minutes of internet access.
@@ -21,22 +22,17 @@ def virgin_portal_login():
         driver = webdriver.Firefox()
 
     driver.get(LOGIN_ENDPOINT)
+    email_field = driver.find_element_by_name("tb_email")
+    if email_field:
+        print "\t-> Entering random email.."
+        email_field.send_keys("east{}@gm.com".format(random_string))
+        email_field.send_keys(Keys.RETURN)
 
-    logged_in = False
-    with ignored(Exception):
-        email_field = driver.find_element_by_name("tb_email")
-        if email_field:
-            print "\t-> Entering random email.."
-            email_field.send_keys("east{}@gm.com".format(random_string))
-            email_field.send_keys(Keys.RETURN)
-
-        print "\t-> Selecting free 15min Wi-Fi option"
-        free_wifi_button = driver.find_element_by_id("btn15Min")
-        free_wifi_button.send_keys(Keys.RETURN)
-        logged_in = True
+    print "\t-> Selecting free 15min Wi-Fi option"
+    free_wifi_button = driver.find_element_by_id("btn15Min")
+    free_wifi_button.send_keys(Keys.RETURN)
 
     driver.close()
-    return logged_in
 
 
 def free_wifi():
@@ -55,10 +51,7 @@ def free_wifi():
                 break
 
     print "Grabbing free 15 minutes.."
-
-    while not virgin_portal_login():
-        print "Selenium is a cry baby :( trying again.."
-        time.sleep(0.5)
+    virgin_portal_login()
 
 if __name__ == "__main__":
     while True:
